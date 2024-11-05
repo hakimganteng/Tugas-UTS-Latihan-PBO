@@ -1,59 +1,100 @@
+package View;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package View;
+
+import Kelas.Category;
+import Kelas.Products;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import javax.swing.table.DefaultTableModel;
-import Kelas.User;
 /**
  *
  * @author ahmad luqman hakim
  */
-public class FrameUser extends javax.swing.JFrame {
+public class FrameProducts extends javax.swing.JFrame {
 
     /**
      * Creates new form ss
      */
-    public FrameUser() {
+    public FrameProducts() {
         initComponents();
         loadTabel();
+        comboBox();
+        autoID();
+
     }
     
-    void loadTabel() {
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("User Name");
-        model.addColumn("Email");
-        model.addColumn("Full Name");
-        model.addColumn("Status");
-
+    void loadTabel(){
+    DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Product ID");
+        model.addColumn("Product Name");
+        model.addColumn("Description");
+        model.addColumn("Price");
+        model.addColumn("Category");
+        
+        
         try {
-            User us = new User();
-            ResultSet data = us.tampiluser();
+            Products prod = new Products();
+            ResultSet data = prod.tampilProduct();
+            
+            while(data != null && data.next()){
+            
+            model.addRow(new Object[]{
+            data.getString("ID"),
+            data.getString("Nama"),
+            data.getString("Deskripsi"),
+            data.getInt("Harga"),
+            data.getString("Kategori")
 
-            while (data.next()) {
-                model.addRow(new Object[]{
-                    data.getString("user_name"),
-                    data.getString("user_email"),
-                    data.getString("user_fullname"),
-                    data.getInt("user_status") == 1 ? "Aktif" : "Tidak Aktif"
-                });
-
+            
+            });  
             }
-
+                
+        } catch (SQLException SQLException) {
+        } 
+        
+        tProduk.setModel(model);
+    }
+   void comboBox(){
+    try {
+            Category cat = new Category();
+            ResultSet data = cat.tampilComboBox();
+            
+            while(data.next()){
+            String isi = data.getString("category_name");
+            Category.addItem(isi);
+        }
+             
+        } catch (SQLException SQLException) {
+        } 
+    }
+    
+    void autoID(){
+    try {
+            Products prod = new Products();
+            ResultSet id = prod.autoID();
+            
+            if (id != null && id.next()) {
+                int auto = id.getInt("ID") + 1;
+                tID.setText(String.valueOf(auto));
+            } else {
+                tID.setText("1");
+            }
+  
         } catch (SQLException sQLException) {
         }
-
-        Tuser.setModel(model);
     }
-   void reset() {
-        tf_Nama.setText(null);
-        tf_Nama.setEditable(true);
-        tf_Email.setText(null);
-        tf_Password.setText(null);
-        tf_Fullname.setText(null);
-        cb_Status.setSelectedItem(null);
+    
+    void reset() {
+    autoID();
+    tID.setEditable(true);
+    tNama.setText(null);
+    tHarga.setText(null);
+    tDesk.setText(null);
+    Category.setSelectedItem(null);
     }
 
     /**
@@ -73,16 +114,16 @@ public class FrameUser extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        tf_Nama = new javax.swing.JTextField();
-        tf_Email = new javax.swing.JTextField();
-        tf_Password = new javax.swing.JTextField();
-        tf_Fullname = new javax.swing.JTextField();
-        cb_Status = new javax.swing.JComboBox<>();
-        bt_Tambah = new javax.swing.JButton();
+        tID = new javax.swing.JTextField();
+        tNama = new javax.swing.JTextField();
+        tDesk = new javax.swing.JTextField();
+        tHarga = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        Tuser = new javax.swing.JTable();
+        tProduk = new javax.swing.JTable();
+        bt_Tambah = new javax.swing.JButton();
         bt_Hapus = new javax.swing.JButton();
         bt_Ubah = new javax.swing.JButton();
+        Category = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -92,7 +133,7 @@ public class FrameUser extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Andalus", 1, 36)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("User Toko Kita");
+        jLabel1.setText("Products");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -112,33 +153,21 @@ public class FrameUser extends javax.swing.JFrame {
         );
 
         jLabel2.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
-        jLabel2.setText("Username");
+        jLabel2.setText("Id");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
-        jLabel3.setText("Email");
+        jLabel3.setText("Nama");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
-        jLabel4.setText("Password");
+        jLabel4.setText("Deskripsi");
 
         jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
-        jLabel5.setText("Fullname");
+        jLabel5.setText("Harga");
 
         jLabel6.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
-        jLabel6.setText("Status");
+        jLabel6.setText("Kategori");
 
-        cb_Status.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aktif", "Tidak Aktif" }));
-
-        bt_Tambah.setBackground(new java.awt.Color(0, 0, 255));
-        bt_Tambah.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        bt_Tambah.setForeground(new java.awt.Color(255, 255, 255));
-        bt_Tambah.setText("Tambah");
-        bt_Tambah.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_TambahActionPerformed(evt);
-            }
-        });
-
-        Tuser.setModel(new javax.swing.table.DefaultTableModel(
+        tProduk.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -149,21 +178,31 @@ public class FrameUser extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        Tuser.addAncestorListener(new javax.swing.event.AncestorListener() {
+        tProduk.addAncestorListener(new javax.swing.event.AncestorListener() {
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                TuserAncestorAdded(evt);
+                tProdukAncestorAdded(evt);
             }
             public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
-        Tuser.addMouseListener(new java.awt.event.MouseAdapter() {
+        tProduk.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                TuserMouseClicked(evt);
+                tProdukMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(Tuser);
+        jScrollPane1.setViewportView(tProduk);
+
+        bt_Tambah.setBackground(new java.awt.Color(0, 0, 255));
+        bt_Tambah.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        bt_Tambah.setForeground(new java.awt.Color(255, 255, 255));
+        bt_Tambah.setText("Tambah");
+        bt_Tambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_TambahActionPerformed(evt);
+            }
+        });
 
         bt_Hapus.setBackground(new java.awt.Color(255, 0, 0));
         bt_Hapus.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -191,33 +230,33 @@ public class FrameUser extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(bt_Ubah)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bt_Hapus)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bt_Tambah))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addGap(60, 60, 60)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(tf_Nama)
-                            .addComponent(tf_Email)
-                            .addComponent(tf_Password)
-                            .addComponent(tf_Fullname)
-                            .addComponent(cb_Status, 0, 336, Short.MAX_VALUE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel6))
+                .addGap(60, 60, 60)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(tNama, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tDesk, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tHarga, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Category, javax.swing.GroupLayout.Alignment.LEADING, 0, 324, Short.MAX_VALUE)
+                    .addComponent(tID))
+                .addGap(109, 109, 109))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 615, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bt_Ubah)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bt_Hapus)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bt_Tambah)
+                .addGap(19, 19, 19))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -226,23 +265,23 @@ public class FrameUser extends javax.swing.JFrame {
                 .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(tf_Nama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(tf_Email, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(tf_Password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tDesk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(tf_Fullname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(tHarga, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(cb_Status, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Category, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bt_Tambah)
@@ -269,74 +308,95 @@ public class FrameUser extends javax.swing.JFrame {
 
     private void bt_TambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_TambahActionPerformed
         try {
-            User user = new Kelas.User();
-            user.setUser_name(tf_Nama.getText());
-            user.setUser_email(tf_Email.getText());
-            user.setUser_password(tf_Password.getText());
-            user.setUser_fullname(tf_Fullname.getText());
-            if (cb_Status.getSelectedItem().equals("Aktif")) {
-                user.setUser_status(1);
-            } else {
-                user.setUser_status(0);
+            Products prod = new Products();
+            Category cat = new Category();
+            prod.setProduct_id(Integer.parseInt(tID.getText()));
+            prod.setProduct_name(tNama.getText());
+            prod.setProduct_desc(tDesk.getText());
+            prod.setProduct_price(Integer.parseInt(tHarga.getText()));
+            cat.setCategory_name(Category.getSelectedItem().toString());
+            ResultSet data = cat.Konversi();
+
+            if (data.next()) {
+                String isi = data.getString("category_id");
+                prod.setProduct_cat_id(Integer.parseInt(isi));
+
             }
-            user.TambahUser();
-        } catch (SQLException sQLException) {
+            prod.tambahProduct();
+
+        } catch (SQLException ex) {
+
         }
+        loadTabel();
+        reset();
+
     }//GEN-LAST:event_bt_TambahActionPerformed
 
-    private void TuserAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_TuserAncestorAdded
+    private void tProdukAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tProdukAncestorAdded
         // TODO add your handling code here:
 
-    }//GEN-LAST:event_TuserAncestorAdded
+    }//GEN-LAST:event_tProdukAncestorAdded
 
-    private void TuserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TuserMouseClicked
+    private void tProdukMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tProdukMouseClicked
         // TODO add your handling code here:
-        int baris = Tuser.rowAtPoint(evt.getPoint());
-        String userName = Tuser.getValueAt(baris, 0).toString();
-        String email = Tuser.getValueAt(baris, 1).toString();
-        String fullName = Tuser.getValueAt(baris, 2).toString();
-        String status = Tuser.getValueAt(baris, 3).toString();
+        // TODO add your handling code here:
+        int baris = tProduk.rowAtPoint(evt.getPoint());
+        String ID = tProduk.getValueAt(baris, 0).toString();
+        String nama = tProduk.getValueAt(baris, 1).toString();
+        String Desc = tProduk.getValueAt(baris, 2).toString();
+        String Harga = tProduk.getValueAt(baris, 3).toString();
+        String Kategori = tProduk.getValueAt(baris, 4).toString();
 
-        tf_Nama.setText(userName);
-        tf_Nama.setEditable(false);
-        tf_Email.setText(email);
-        tf_Fullname.setText(fullName);
-        cb_Status.setSelectedItem(status);
-    }//GEN-LAST:event_TuserMouseClicked
+        tID.setText(ID);
+        tID.setEditable(false);
+        tNama.setText(nama);
+        tHarga.setText(Harga);
+        tDesk.setText(Desc);
+        Category.setSelectedItem(Kategori);
+
+    }//GEN-LAST:event_tProdukMouseClicked
 
     private void bt_HapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_HapusActionPerformed
         // TODO add your handling code here:
         try {
-            User usr = new User();
-            usr.setUser_name(tf_Nama.getText());
-            usr.hapusUser();
-        } catch (SQLException sQLException) {
+            Products prod = new Products();
+            prod.setProduct_id(Integer.parseInt(tID.getText()));
+            prod.hapusProduct();
+            
+        } catch (Exception e) {
         }
         loadTabel();
         reset();
+
     }//GEN-LAST:event_bt_HapusActionPerformed
 
     private void bt_UbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_UbahActionPerformed
         // TODO add your handling code here:
 
         try {
+            Products prod = new Products();
+            Category cat = new Category();
+            prod.setProduct_id(Integer.parseInt(tID.getText()));
+            prod.setProduct_name(tNama.getText());
+            prod.setProduct_desc(tDesk.getText());
+            prod.setProduct_price(Integer.parseInt(tHarga.getText()));
+            cat.setCategory_name(Category.getSelectedItem().toString());
+            ResultSet data = cat.Konversi();
+            
+             if (data.next()) {
+                String isi = data.getString("category_id");
+                prod.setProduct_cat_id(Integer.parseInt(isi));
 
-            User usr = new User();
-            usr.setUser_name(tf_Nama.getText());
-            usr.setUser_email(tf_Email.getText());
-            usr.setUser_password(tf_Password.getText());
-            usr.setUser_fullname(tf_Fullname.getText());
-            if (cb_Status.getSelectedItem().equals("Aktif")) {
-                usr.setUser_status(1);
-            } else {
-                usr.setUser_status(0);
             }
+            prod.ubahProduct();
 
-            usr.ubahUser();
-        }catch (SQLException sQLException) {
+        } catch (SQLException ex) {
+            System.out.println("data tidak masuk");
         }
         loadTabel();
         reset();
+     
+
     }//GEN-LAST:event_bt_UbahActionPerformed
 
     /**
@@ -356,31 +416,32 @@ public class FrameUser extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrameUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameProducts.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrameUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameProducts.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrameUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameProducts.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrameUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameProducts.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrameUser().setVisible(true);
+                new FrameProducts().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable Tuser;
+    private javax.swing.JComboBox<String> Category;
     private javax.swing.JButton bt_Hapus;
     private javax.swing.JButton bt_Tambah;
     private javax.swing.JButton bt_Ubah;
-    private javax.swing.JComboBox<String> cb_Status;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -390,9 +451,10 @@ public class FrameUser extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField tf_Email;
-    private javax.swing.JTextField tf_Fullname;
-    private javax.swing.JTextField tf_Nama;
-    private javax.swing.JTextField tf_Password;
+    private javax.swing.JTextField tDesk;
+    private javax.swing.JTextField tHarga;
+    private javax.swing.JTextField tID;
+    private javax.swing.JTextField tNama;
+    private javax.swing.JTable tProduk;
     // End of variables declaration//GEN-END:variables
 }

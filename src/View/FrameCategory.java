@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package View;
+import Kelas.Category;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import javax.swing.table.DefaultTableModel;
@@ -11,49 +12,59 @@ import Kelas.User;
  *
  * @author ahmad luqman hakim
  */
-public class FrameUser extends javax.swing.JFrame {
+public class FrameCategory extends javax.swing.JFrame {
 
     /**
      * Creates new form ss
      */
-    public FrameUser() {
+    public FrameCategory() {
         initComponents();
         loadTabel();
+        autoID();
     }
     
-    void loadTabel() {
+    void loadTabel(){
         DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("User Name");
-        model.addColumn("Email");
-        model.addColumn("Full Name");
-        model.addColumn("Status");
-
+        model.addColumn("ID KATEGORI");
+        model.addColumn("KATEGORI");
+        
         try {
-            User us = new User();
-            ResultSet data = us.tampiluser();
-
-            while (data.next()) {
-                model.addRow(new Object[]{
-                    data.getString("user_name"),
-                    data.getString("user_email"),
-                    data.getString("user_fullname"),
-                    data.getInt("user_status") == 1 ? "Aktif" : "Tidak Aktif"
-                });
-
+            Category cat = new Category();
+            ResultSet data = cat.tampilCategory();
+            
+            while(data.next()){
+            model.addRow(new Object[]{
+            data.getString("category_id"),
+            data.getString("category_name"),   
+            });
+        }
+             
+        } catch (SQLException SQLException) {
+        } 
+        
+        tKategori.setModel(model);  
+    }
+   void autoID(){
+    try {
+            Category cat = new Category();
+            ResultSet id = cat.autoID();
+            
+            if (id.next()) {
+                int auto = id.getInt("ID") + 1;
+                tID.setText(String.valueOf(auto));
+            } else {
+                tID.setText("1");
             }
-
+  
         } catch (SQLException sQLException) {
         }
+    }                                     
+    
+    void Reset(){
+    autoID();
+    tID.setEditable(false);
+    tNama.setText(null);
 
-        Tuser.setModel(model);
-    }
-   void reset() {
-        tf_Nama.setText(null);
-        tf_Nama.setEditable(true);
-        tf_Email.setText(null);
-        tf_Password.setText(null);
-        tf_Fullname.setText(null);
-        cb_Status.setSelectedItem(null);
     }
 
     /**
@@ -70,17 +81,11 @@ public class FrameUser extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        tf_Nama = new javax.swing.JTextField();
-        tf_Email = new javax.swing.JTextField();
-        tf_Password = new javax.swing.JTextField();
-        tf_Fullname = new javax.swing.JTextField();
-        cb_Status = new javax.swing.JComboBox<>();
-        bt_Tambah = new javax.swing.JButton();
+        tID = new javax.swing.JTextField();
+        tNama = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        Tuser = new javax.swing.JTable();
+        tKategori = new javax.swing.JTable();
+        bt_Tambah = new javax.swing.JButton();
         bt_Hapus = new javax.swing.JButton();
         bt_Ubah = new javax.swing.JButton();
 
@@ -92,7 +97,7 @@ public class FrameUser extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Andalus", 1, 36)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("User Toko Kita");
+        jLabel1.setText("Category");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -112,33 +117,12 @@ public class FrameUser extends javax.swing.JFrame {
         );
 
         jLabel2.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
-        jLabel2.setText("Username");
+        jLabel2.setText("ID");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
-        jLabel3.setText("Email");
+        jLabel3.setText("Katyegori");
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
-        jLabel4.setText("Password");
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
-        jLabel5.setText("Fullname");
-
-        jLabel6.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
-        jLabel6.setText("Status");
-
-        cb_Status.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aktif", "Tidak Aktif" }));
-
-        bt_Tambah.setBackground(new java.awt.Color(0, 0, 255));
-        bt_Tambah.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        bt_Tambah.setForeground(new java.awt.Color(255, 255, 255));
-        bt_Tambah.setText("Tambah");
-        bt_Tambah.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bt_TambahActionPerformed(evt);
-            }
-        });
-
-        Tuser.setModel(new javax.swing.table.DefaultTableModel(
+        tKategori.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -149,21 +133,31 @@ public class FrameUser extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        Tuser.addAncestorListener(new javax.swing.event.AncestorListener() {
+        tKategori.addAncestorListener(new javax.swing.event.AncestorListener() {
             public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                TuserAncestorAdded(evt);
+                tKategoriAncestorAdded(evt);
             }
             public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
             }
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
-        Tuser.addMouseListener(new java.awt.event.MouseAdapter() {
+        tKategori.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                TuserMouseClicked(evt);
+                tKategoriMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(Tuser);
+        jScrollPane1.setViewportView(tKategori);
+
+        bt_Tambah.setBackground(new java.awt.Color(0, 0, 255));
+        bt_Tambah.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        bt_Tambah.setForeground(new java.awt.Color(255, 255, 255));
+        bt_Tambah.setText("Tambah");
+        bt_Tambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bt_TambahActionPerformed(evt);
+            }
+        });
 
         bt_Hapus.setBackground(new java.awt.Color(255, 0, 0));
         bt_Hapus.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -191,33 +185,27 @@ public class FrameUser extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(bt_Ubah)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bt_Hapus)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bt_Tambah))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addGap(60, 60, 60)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(tf_Nama)
-                            .addComponent(tf_Email)
-                            .addComponent(tf_Password)
-                            .addComponent(tf_Fullname)
-                            .addComponent(cb_Status, 0, 336, Short.MAX_VALUE))))
+                .addGap(72, 72, 72)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addGap(60, 60, 60)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(tID, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                    .addComponent(tNama))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 615, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(bt_Ubah)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bt_Hapus)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(bt_Tambah)
+                .addGap(43, 43, 43))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -226,29 +214,17 @@ public class FrameUser extends javax.swing.JFrame {
                 .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(tf_Nama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(tf_Email, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(tf_Password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(tf_Fullname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel6)
-                    .addComponent(cb_Status, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(tNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(138, 138, 138)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bt_Tambah)
                     .addComponent(bt_Hapus)
                     .addComponent(bt_Ubah))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -268,75 +244,67 @@ public class FrameUser extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bt_TambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_TambahActionPerformed
-        try {
-            User user = new Kelas.User();
-            user.setUser_name(tf_Nama.getText());
-            user.setUser_email(tf_Email.getText());
-            user.setUser_password(tf_Password.getText());
-            user.setUser_fullname(tf_Fullname.getText());
-            if (cb_Status.getSelectedItem().equals("Aktif")) {
-                user.setUser_status(1);
-            } else {
-                user.setUser_status(0);
-            }
-            user.TambahUser();
-        } catch (SQLException sQLException) {
+      try {
+            Category cat = new Category();
+            cat.setCategory_id(Integer.parseInt(tID.getText()));
+            cat.setCategory_name(tNama.getText());
+
+            cat.tambahCategory();
+
+        } catch (SQLException ex) {
+
         }
+        loadTabel();
+        Reset();
+
     }//GEN-LAST:event_bt_TambahActionPerformed
 
-    private void TuserAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_TuserAncestorAdded
+    private void tKategoriAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tKategoriAncestorAdded
         // TODO add your handling code here:
 
-    }//GEN-LAST:event_TuserAncestorAdded
+    }//GEN-LAST:event_tKategoriAncestorAdded
 
-    private void TuserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TuserMouseClicked
+    private void tKategoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tKategoriMouseClicked
         // TODO add your handling code here:
-        int baris = Tuser.rowAtPoint(evt.getPoint());
-        String userName = Tuser.getValueAt(baris, 0).toString();
-        String email = Tuser.getValueAt(baris, 1).toString();
-        String fullName = Tuser.getValueAt(baris, 2).toString();
-        String status = Tuser.getValueAt(baris, 3).toString();
+        int baris = tKategori.rowAtPoint(evt.getPoint());
+        String username = tKategori.getValueAt(baris, 0).toString();
+        String nama = tKategori.getValueAt(baris, 1).toString();
 
-        tf_Nama.setText(userName);
-        tf_Nama.setEditable(false);
-        tf_Email.setText(email);
-        tf_Fullname.setText(fullName);
-        cb_Status.setSelectedItem(status);
-    }//GEN-LAST:event_TuserMouseClicked
+        tID.setText(username);
+        tID.setEditable(false);
+        tNama.setText(nama);
+
+    }//GEN-LAST:event_tKategoriMouseClicked
 
     private void bt_HapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_HapusActionPerformed
         // TODO add your handling code here:
         try {
-            User usr = new User();
-            usr.setUser_name(tf_Nama.getText());
-            usr.hapusUser();
-        } catch (SQLException sQLException) {
+            Category cat = new Category();
+            cat.setCategory_id(Integer.parseInt(tID.getText()));
+            cat.hapusCategory();
+            
+        } catch (Exception e) {
         }
         loadTabel();
-        reset();
+        Reset();
+
     }//GEN-LAST:event_bt_HapusActionPerformed
 
     private void bt_UbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_UbahActionPerformed
         // TODO add your handling code here:
 
         try {
-
-            User usr = new User();
-            usr.setUser_name(tf_Nama.getText());
-            usr.setUser_email(tf_Email.getText());
-            usr.setUser_password(tf_Password.getText());
-            usr.setUser_fullname(tf_Fullname.getText());
-            if (cb_Status.getSelectedItem().equals("Aktif")) {
-                usr.setUser_status(1);
-            } else {
-                usr.setUser_status(0);
-            }
-
-            usr.ubahUser();
-        }catch (SQLException sQLException) {
+            Category cat = new Category();
+            cat.setCategory_id(Integer.parseInt(tID.getText()));
+            cat.setCategory_name(tNama.getText());          
+            cat.ubahCategory();
+            
+        } catch (SQLException sQLException) {
         }
         loadTabel();
-        reset();
+        Reset();
+
+
     }//GEN-LAST:event_bt_UbahActionPerformed
 
     /**
@@ -356,43 +324,39 @@ public class FrameUser extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrameUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameCategory.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrameUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameCategory.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrameUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameCategory.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrameUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrameCategory.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrameUser().setVisible(true);
+                new FrameCategory().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable Tuser;
     private javax.swing.JButton bt_Hapus;
     private javax.swing.JButton bt_Tambah;
     private javax.swing.JButton bt_Ubah;
-    private javax.swing.JComboBox<String> cb_Status;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField tf_Email;
-    private javax.swing.JTextField tf_Fullname;
-    private javax.swing.JTextField tf_Nama;
-    private javax.swing.JTextField tf_Password;
+    private javax.swing.JTextField tID;
+    private javax.swing.JTable tKategori;
+    private javax.swing.JTextField tNama;
     // End of variables declaration//GEN-END:variables
 }
